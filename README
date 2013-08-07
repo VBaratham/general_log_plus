@@ -1,12 +1,6 @@
 general_log_plus is a framework for expanding MySQL's
 general_log. With general_log_plus, one can easily add columns or
-process/clean/massage the data in the general_log. Current features
-include:
-
-    - Annotating log entries with query types
-    - Cleaning/canonicalizing queries (capitalization, spacing)
-    - Annotating log entries with the database used
-    - Naive estimation of query performance
+process/clean/massage the data in the general_log.
 
 SELECTORS
 
@@ -51,7 +45,7 @@ used before any other sorted Processor (sorting is performed between
 steps).
 
 Sorted Processors which keep track of state can be used to to achieve
-the following interesting things, all implemented:
+the following interesting things:
 
     - Naive estimation of query performance (by checking time elapsed
       since the previous query in the session)
