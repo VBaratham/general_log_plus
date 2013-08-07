@@ -1,0 +1,81 @@
+general_log_plus is a framework for expanding MySQL's
+general_log. With general_log_plus, one can easily add columns or
+process/clean/massage the data in the general_log. Current features
+include:
+
+    - Annotating log entries with query types
+    - Cleaning/canonicalizing queries (capitalization, spacing)
+    - Annotating log entries with the database used
+    - Naive estimation of query performance
+
+SELECTORS
+
+Selectors are strings which are placed in the WHERE clause of the sql
+statement that pulls data from the general_log.
+
+PREFILTERS
+
+Prefilters are functions that take a row of the raw general_log and
+return True or False. If a prefilter returns False on a row, that row
+will be skipped. Prefilters can always be converted into Processors
+that raise SkipRowExceptions, but skipping rows earlier can be more
+efficient.
+
+PROCESSORS
+
+The heart of general_log_plus, Processors are objects that have 2
+attributes:
+
+    1.) inputs - A list of input column names (taken from either the
+    raw general_log, or the output of a previous Processor)
+
+    2.) outputs - A list of output column names, which will be added
+    onto each row (columns are not deleted from the record until the
+    final step), unless they are overwritten.
+
+and one function process(), which takes the values of the input
+columns for a row and returns the computed values of the output
+columns. process() may raise a SkipRowException if the row being
+processed should be skipped (removed from the log).
+
+Processors that need to process the data in a certain order may
+specify this order in one of two ways:
+
+    1.) With the sql_sort_by attribute
+
+    2.) With the sort_column and sort_reverse attributes, which are
+    passed to Python's sorted() builtin function
+
+Only one sorted Processor in a given job can use 1.), and it must be
+used before any other sorted Processor (sorting is performed between
+steps).
+
+Sorted Processors which keep track of state can be used to to achieve
+the following interesting things, all implemented:
+
+    - Naive estimation of query performance (by checking time elapsed
+      since the previous query in the session)
+
+    - Annotating log entries with the database used, by looking at
+      'Connect' log entries and 'USE <database>' queries
+
+JOB
+
+A Job defines the selectors, Prefilters, Processors, and final output
+columns (a subset of the union of output columns of each step, and the
+raw general_log columns). To run a job, construct a Job object and
+invoke its run() method.
+
+NOTE: for now, we assume tables get reduced all at once.
+
+UPDATING
+
+When more queries are run on your system (and the general_log
+increases in size), running the Job again will select only those
+queries newer than the newest query in the processed log. In order for
+the state of all Processors to be retained, they must be Pickled. The
+file extension for a general_log_plus job is .glpjob
+
+TODO: If the sort order is not by event_time, this will be a problem^
+
+TODO: Decide on serialization paradigm
