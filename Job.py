@@ -4,7 +4,8 @@ from MySQLdb.cursors import DictCursor
 
 from operator import itemgetter
 
-from Exceptions import InvalidSortException, SkipRowException
+from Exceptions import InvalidSortException, SkipRowException, InvalidInputOutputOrderException
+from myutils import print_and_execute
 
 class Job:
 
@@ -27,7 +28,8 @@ class Job:
         self.processors = processors
         self.outputs = outputs
 
-        self._input_output_validate()
+        if not self._input_output_validate():
+            raise InvalidInputOutputOrderException
         
     def _sort_schema(self):
         """
@@ -74,7 +76,9 @@ class Job:
             for col in proc.inputs:
                 if col not in cols:
                     return False
-            cols.update(proc.inputs)
+            cols.update(proc.outputs)
+
+        return True
 
 
     def _all_prefilters_pass(self, row):
@@ -135,7 +139,7 @@ class Job:
                                                           sql_where,
                                                           sql_sort_by)
 
-            cur.execute(sql_full)
+            print_and_execute(sql_full, cur)
 
             rows = filter(self._all_prefilters_pass, cur.fetchall())
 
@@ -154,8 +158,10 @@ class Job:
                         newrows.append(row)
                     except SkipRowException:
                         continue
+                print "Done with one group of processors"
                 rows = newrows
-            
+
+            print "All done processing, writing temp file and loading into table"
             temp_filename = '{0}.tmp'.format(table)
             with open(temp_filename, 'w') as outfile:
                 print >>outfile, '\n'.join('\t'.join(str(x) for x in
