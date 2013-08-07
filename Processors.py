@@ -3,7 +3,7 @@ import re
 
 from Exceptions import SkipRowException
 
-from myutils import clean
+from myutils import clean, get_reserved_words
 
 class BaseProcessor(object):
     def __init__(self):
@@ -11,6 +11,11 @@ class BaseProcessor(object):
         self.sql_sort_by = None
 
 class UserHostIpProcessor(BaseProcessor):
+    """
+    Create 'user', 'host', and 'ip' columns by parsing the
+    'user_host' column.
+    """
+
     def __init__(self, users_reject = [], hosts_reject = [], ip_reject = []):
         super(UserHostIpProcessor, self).__init__()
         self.users_reject = set(users_reject)
@@ -34,10 +39,17 @@ class UserHostIpProcessor(BaseProcessor):
         return user, host, ip
 
 class CleanProcessor(BaseProcessor):
+    """
+    Capitalize all sql keywords and replace all runs of whitespace
+    with a single whitespace character.
+    """
+
     def __init__(self):
         super(CleanProcessor, self).__init__()
         self.inputs = ['argument']
         self.outputs = ['query']
+        self.reserved_words = get_reserved_words('mysql_keywords.txt')
 
     def process(self, row):
-        return clean(row.get('argument') or ''),
+        return clean(row.get('argument') or '', reserved_words = self.reserved_words),
+

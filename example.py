@@ -1,3 +1,4 @@
+from Prefilters import unwanted_starts_prefilter, unwanted_terms_prefilter
 from Processors import UserHostIpProcessor, CleanProcessor
 from Job import Job
 
@@ -8,7 +9,12 @@ database, storing into the 'test_processed_log' database.
 
 if __name__ == '__main__':
     j = Job(selectors = ["command_type in ('Execute', 'Query')"],
-            prefilters = [],
+            prefilters = [unwanted_starts_prefilter(["SHOW",
+                                                     "SET sql_mode",
+                                                     "SET NAMES",
+                                                     "SET character_set_results"]),
+                          unwanted_terms_prefilter(["information_schema",
+                                                    "mysql"])],
             processors = [UserHostIpProcessor(users_reject=['buildbot', 'root']),
                           CleanProcessor()],
             outputs = [('event_time', 'TIMESTAMP'),

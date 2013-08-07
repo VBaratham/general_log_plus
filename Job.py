@@ -14,7 +14,7 @@ class Job:
         selectors  - list of sql statements to be put in the WHERE clause
                      of the query that selects data from the general_log
 
-        prefilters - list of Prefilter objects to use in this Job
+        prefilters - list of Prefilter functions to use in this Job
 
         processors - list of Processor objects to use in this Job
 
