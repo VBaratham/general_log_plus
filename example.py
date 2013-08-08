@@ -11,12 +11,17 @@ database, storing into the 'test_processed_log' database.
 """
 
 if __name__ == '__main__':
-    # replace long runs of digits with '<numlist len=##>'
-    numlist_sub_processor = RegexReplaceProcessor('argument',
+
+    # Define a Processor to replace long runs of digits with '<numlist
+    # len=##>'. This Processor will be passed to the Job when we
+    # create it. Other Processors are not created at the same time as
+    # the Job
+    numlist_sub_processor = RegexReplaceProcessor('query',
                                                   re.compile(r'\([0-9, ]{20,}\)'),
                                                   lambda x: '<numlist len={0}>'
                                                   .format(x.group(0).count(',') + 1))
 
+    # create the Job
     j = Job(selectors = ["command_type in ('Execute', 'Query')"],
             prefilters = [unwanted_terms_prefilter(["information_schema",
                                                     "mysql"],
@@ -45,5 +50,6 @@ if __name__ == '__main__':
                        ('query', 'MEDIUMTEXT'),
                        ('vals', 'MEDIUMTEXT'),
                    ])
-                                              
+                    
+    # run the Job
     j.run('test_processed_log', source_db = 'test_general_log')
