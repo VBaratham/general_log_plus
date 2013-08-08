@@ -1,11 +1,11 @@
-general_log_plus is a framework for expanding MySQL's
+general_log_plus is a framework for processing/expanding MySQL's
 general_log. With general_log_plus, one can easily add columns or
-process/clean/massage the data in the general_log.
+process/clean/reduce or otherwise massage the data in the general_log.
 
 SELECTORS
 
-Selectors are strings which are placed in the WHERE clause of the sql
-statement that pulls data from the general_log.
+Selectors are strings which are placed in the WHERE clause of the
+query that pulls data from the general_log.
 
 PREFILTERS
 
@@ -13,7 +13,10 @@ Prefilters are functions that take a row of the raw general_log and
 return True or False. If a prefilter returns False on a row, that row
 will be skipped. Prefilters can always be converted into Processors
 that raise SkipRowExceptions, but skipping rows earlier can be more
-efficient.
+efficient. There are several functions for generating certain
+prefilter functions in Prefilters.py, or you can defined them yourself
+with 'def' or 'lambda' (the normal ways for defining callables in
+Python).
 
 PROCESSORS
 
@@ -52,6 +55,8 @@ the following interesting things:
 
     - Annotating log entries with the database used, by looking at
       'Connect' log entries and 'USE <database>' queries
+
+Some Processor classes can be found in Processors.py
 
 JOB
 
