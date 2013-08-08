@@ -12,8 +12,8 @@ class BaseProcessor(object):
 
 class UserHostIpProcessor(BaseProcessor):
     """
-    Create 'user', 'host', and 'ip' columns by parsing the
-    'user_host' column.
+    Create 'user', 'host', and 'ip' columns by parsing the 'user_host'
+    column. Reject rows with certain users, hosts, or ip's.
     """
 
     def __init__(self, users_reject = [], hosts_reject = [], ip_reject = []):
