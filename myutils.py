@@ -40,6 +40,7 @@ def printlist(lst, skiplines=False):
     for l in lst:
         print l
         if skiplines: print "\n"
+    # print ("\n" if skiplines else "").join(lst); #untested but slightly prettier/more Pythonic
 
 def print_and_execute(query, cur):
     print "Executing:"
