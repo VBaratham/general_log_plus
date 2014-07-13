@@ -154,6 +154,8 @@ class TypeRegexReplaceProcessor(RegexReplaceProcessor):
     Run a regex replace, like RegexReplaceProcessor, but only on
     certain query types
     """
+    # TODO: Rewrite to take a query type and Processor object,
+    # and run that Processor on certain query types only
 
     def __init__(self, query_types, field, regex, replace_fcn):
         super(TypeRegexReplaceProcessor, self).__init__(field, regex, replace_fcn)
