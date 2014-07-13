@@ -14,7 +14,7 @@ def unwanted_starts_prefilter(unwanted_starts, flags=0):
 def unwanted_terms_prefilter(unwanted_terms, flags=0):
     """
     Return a prefilter that rejects queries that contain one of the
-    elemenfs of @unwanted_terms, which are regexes (or just search
+    elements of @unwanted_terms, which are regexes (or just search
     strings)
     """
     unwanted_terms_re = re.compile('|'.join(unwanted_terms), flags=flags)
