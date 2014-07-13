@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     # Define a Processor to replace long runs of digits with '<numlist
     # len=##>'. This Processor will be passed to the Job when we
-    # create it. Other Processors are not created at the same time as
+    # create it. Other Processors are just created in the same line as
     # the Job
     numlist_sub_processor = RegexReplaceProcessor('query',
                                                   re.compile(r'\([0-9, ]{20,}\)'),
